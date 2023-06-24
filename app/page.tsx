@@ -20,14 +20,19 @@ import {
 } from './components/quote-generator/QuoteGenerator'
 import { useState } from 'react'
 import { Quote } from './models/Quote'
-import QuoteDb from './database/QuotesDb'
+import { QuoteCard } from './components/quote-card/QuoteCard'
+import saveQ from '@/database/backend/src/db'
 
 export default function Home() {
   const [quotesGenerated, setQuotesGeneratedAmount] = useState<Number | undefined>(0);
   const [showingQuote, setIfQuoteIsShowing] = useState<Boolean | undefined>(false);
-  const saveQuote = (quote: Quote) => {
-    QuoteDb(quote);
-    setIfQuoteIsShowing(true);
+  const closeQuote = () => {
+    
+  }
+  const saveQuote = async (quote: Quote, e: React.SyntheticEvent) => {
+    e.preventDefault();
+    saveQ(quote);
+    setTimeout(() => setIfQuoteIsShowing(true), 3000);
     setQuotesGeneratedAmount(Number(quotesGenerated) + 1);
   }
   return (
@@ -39,11 +44,13 @@ export default function Home() {
         <link href='/favicon.ico'/>
       </Head>
       <GradientBackgroundCon>
-
+        <QuoteCard 
+        open={Boolean(showingQuote)}
+        close={closeQuote}/>
         <QuoteGeneratorFeature>
           <InnerQuoteGenerator>
             <QuoteGeneratorTitle>
-
+              Quote Generator For Joy Your Day
             </QuoteGeneratorTitle>
             <QuoteGeneratorSubTitle>
               Looking for a splash of inspiration? Generate a quote card with a random inspirational quote provided by <CustomLink 
@@ -52,13 +59,12 @@ export default function Home() {
               rel="noopener noreferrer">ZenQuotes API</CustomLink>.
             </QuoteGeneratorSubTitle>
             <QuoteGeneratorButton>
-              <QuoteGeneratorButtonText>
+              <QuoteGeneratorButtonText onClick={() => saveQuote}>
                 Make A Quote!
               </QuoteGeneratorButtonText>
             </QuoteGeneratorButton>
           </InnerQuoteGenerator>
         </QuoteGeneratorFeature>
-
         <BackgroundImageOne
           src={CloudOne}
           height='300'
